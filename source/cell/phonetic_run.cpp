@@ -22,6 +22,7 @@
 // @author: see AUTHORS file
 
 #include <xlnt/cell/phonetic_run.hpp>
+#include <tuple>
 
 namespace xlnt {
 
