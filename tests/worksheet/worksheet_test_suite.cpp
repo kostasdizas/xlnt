@@ -109,6 +109,7 @@ public:
         register_test(test_delete_rows);
         register_test(test_delete_columns);
         register_test(test_insert_too_many);
+        register_test(test_phonetics);
     }
 
     void test_new_worksheet()
@@ -1499,6 +1500,29 @@ public:
         auto ws = wb.active_sheet();
         xlnt_assert_throws(ws.insert_rows(10, 4294967290),
                            xlnt::exception);
+    }
+
+    void test_phonetics()
+    {
+        xlnt::workbook wb;
+        wb.load(path_helper::test_file("15_phonetics.xlsx"));
+        auto ws = wb.active_sheet();
+
+        xlnt_assert_equals(ws.cell("A1").phonetics_visible(), true);
+        xlnt_assert_equals(ws.cell("A1").value<xlnt::rich_text>().phonetic_runs()[0].text, "シュウ ");
+        xlnt_assert_equals(ws.cell("B1").phonetics_visible(), true);
+        xlnt_assert_equals(ws.cell("C1").phonetics_visible(), false);
+
+        wb.save("temp.xlsx");
+
+        xlnt::workbook wb2;
+        wb2.load("temp.xlsx");
+        auto ws2 = wb2.active_sheet();
+
+        xlnt_assert_equals(ws2.cell("A1").phonetics_visible(), true);
+        xlnt_assert_equals(ws2.cell("A1").value<xlnt::rich_text>().phonetic_runs()[0].text, "シュウ ");
+        xlnt_assert_equals(ws2.cell("B1").phonetics_visible(), true);
+        xlnt_assert_equals(ws2.cell("C1").phonetics_visible(), false);
     }
 };
 static worksheet_test_suite x;
